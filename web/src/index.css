@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --plano: #f9f9f7;
+  --superficie: #fcfcfb;
+  --tinta: #0b0b0b;
+  --tinta-2: #52514e;
+  --tenue: #898781;
+  --linea: #e1e0d9;
+  --borde: rgba(11, 11, 11, 0.1);
+  --acento: #2a78d6;
+  --acento-tinta: #ffffff;
+  --peligro: #d03b3b;
+  --exito: #006300;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --plano: #0d0d0d;
+    --superficie: #1a1a19;
+    --tinta: #f0efec;
+    --tinta-2: #c3c2b7;
+    --tenue: #898781;
+    --linea: #2c2c2a;
+    --borde: rgba(255, 255, 255, 0.1);
+    --acento: #3987e5;
+    --acento-tinta: #ffffff;
+    --peligro: #e66767;
+    --exito: #0ca30c;
+  }
+}
+
+@theme inline {
+  --color-plano: var(--plano);
+  --color-superficie: var(--superficie);
+  --color-tinta: var(--tinta);
+  --color-tinta-2: var(--tinta-2);
+  --color-tenue: var(--tenue);
+  --color-linea: var(--linea);
+  --color-borde: var(--borde);
+  --color-acento: var(--acento);
+  --color-acento-tinta: var(--acento-tinta);
+  --color-peligro: var(--peligro);
+  --color-exito: var(--exito);
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html,
+body {
+  background: var(--plano);
+  color: var(--tinta);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+}
+
+/* iOS hace zoom en campos con letra < 16px */
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.pt-seguro {
+  padding-top: env(safe-area-inset-top);
+}
+.pb-seguro {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.px-seguro {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+.recharts-wrapper,
+.recharts-surface {
+  outline: none;
+}

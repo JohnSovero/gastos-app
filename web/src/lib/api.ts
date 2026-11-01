@@ -46,13 +46,27 @@ export async function actualizarCategoria(
 }
 
 /**
+ * UUID v4. `crypto.randomUUID` solo existe en contextos seguros (HTTPS) y en iOS 15.4+;
+ * al probar en el iPhone por `http://<IP-PC>:5173` no está, así que se arma con
+ * `crypto.getRandomValues`, que sí funciona en cualquier contexto.
+ */
+export function generarId(): string {
+  if (typeof crypto.randomUUID === "function") return crypto.randomUUID();
+  const b = crypto.getRandomValues(new Uint8Array(16));
+  b[6] = (b[6] & 0x0f) | 0x40;
+  b[8] = (b[8] & 0x3f) | 0x80;
+  const h = Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("");
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
+}
+
+/**
  * `idCliente` llega en el enlace de respaldo del atajo: si ese gasto ya se registró
  * (p. ej. el atajo lo reenvió después) no se duplica.
  */
 export async function crearGasto(g: DatosGasto, idCliente?: string | null): Promise<void> {
   const r = await supabase
     .from("gastos")
-    .insert({ ...g, fuente: "app", id_cliente: idCliente || crypto.randomUUID() })
+    .insert({ ...g, fuente: "app", id_cliente: idCliente || generarId() })
     .select("id");
   if (r.error?.code === "23505") return; // ya existía con ese id_cliente
   revisar(r);

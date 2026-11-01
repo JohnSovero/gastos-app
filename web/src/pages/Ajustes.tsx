@@ -113,7 +113,21 @@ export default function Ajustes() {
   const [copiado, setCopiado] = useState(false);
 
   async function copiar() {
-    await navigator.clipboard.writeText(URL_EDGE_FUNCTION);
+    // navigator.clipboard solo existe con HTTPS; por http://<IP-PC>:5173 se usa execCommand.
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(URL_EDGE_FUNCTION);
+    } else {
+      const t = document.createElement("textarea");
+      t.value = URL_EDGE_FUNCTION;
+      t.setAttribute("readonly", "");
+      t.style.position = "fixed";
+      t.style.opacity = "0";
+      document.body.appendChild(t);
+      t.select();
+      t.setSelectionRange(0, t.value.length);
+      document.execCommand("copy");
+      t.remove();
+    }
     setCopiado(true);
     setTimeout(() => setCopiado(false), 2000);
   }

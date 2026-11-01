@@ -1,0 +1,17 @@
+{
+  "name": "gastos-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:web": "npm --prefix web test",
+    "db:push": "supabase db push",
+    "functions:deploy": "supabase functions deploy registrar-gasto --no-verify-jwt --use-api",
+    "types": "supabase gen types typescript --linked --schema public > web/src/lib/database.types.ts"
+  },
+  "devDependencies": {
+    "supabase": "^2.122.0",
+    "vitest": "^3.2.4",
+    "zod": "3.25.76"
+  }
+}

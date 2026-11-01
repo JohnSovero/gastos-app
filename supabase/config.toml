@@ -1,0 +1,6 @@
+# Configuración mínima para trabajar contra el proyecto en la nube (sin Docker).
+project_id = "gastos-app"
+
+[functions.registrar-gasto]
+# El atajo de iOS no tiene JWT: se autentica con el header x-api-key.
+verify_jwt = false

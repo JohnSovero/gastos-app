@@ -1,0 +1,23 @@
+# Evita que el proyecto gratuito de Supabase se pause por 7 días sin actividad.
+# Requiere los secretos SUPABASE_URL y SUPABASE_ANON_KEY en el repo.
+name: keepalive-supabase
+
+on:
+  schedule:
+    - cron: "0 14 */3 * *" # cada 3 días, 09:00 de Lima
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Consulta ligera a la API
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ]; then echo "Faltan secretos; nada que hacer"; exit 0; fi
+          # La anon key no ve datos (RLS), pero la consulta cuenta como actividad.
+          curl -s -o /dev/null -w "HTTP %{http_code}\n" \
+            "$SUPABASE_URL/rest/v1/categorias?select=id&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY"

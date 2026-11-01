@@ -68,8 +68,14 @@ $TOKEN   # guárdalo en tu gestor de contraseñas: lo pondrás en el atajo
 Cárgalo junto con tu UUID:
 
 ```powershell
-npx supabase secrets set INGEST_TOKEN=$TOKEN OWNER_USER_ID=TU-UUID
+npx supabase secrets set "INGEST_TOKEN=$TOKEN" "OWNER_USER_ID=TU-UUID"
+npx supabase secrets list   # deben aparecer INGEST_TOKEN y OWNER_USER_ID
+
+npx supabase secrets set "INGEST_TOKEN=$TOKEN" "OWNER_USER_ID=d32cab6e-a438-48e2-852d-b002c35ffe97"
+
 ```
+
+> Ejecuta todo en la **misma ventana** de PowerShell: `$TOKEN` se pierde si la cierras.
 
 `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` las inyecta Supabase automáticamente.
 
@@ -88,11 +94,14 @@ Define estas variables una vez por sesión de PowerShell:
 
 ```powershell
 $URL   = "https://TU_PROJECT_REF.supabase.co/functions/v1/registrar-gasto"
+$URL   = "https://zerftjbpfizkhrwelxde.supabase.co/functions/v1/registrar-gasto"
+
 $TOKEN = "el-token-del-paso-4"
+$TOKEN=ghctp4lG92Vn2G3w6IPng4y3uU-6BFxJthl1nX6noy8
 
 function Enviar($cuerpo, $token = $TOKEN) {
   $json  = $cuerpo | ConvertTo-Json -Compress
-  $bytes = [Text.Encoding]::UTF8.GetBytes($json)   # para que las tildes lleguen bien
+  $bytes = [Text.Encoding]::UTF8.GetBytes($json)
   $h = @{}; if ($token) { $h["x-api-key"] = $token }
   try   { Invoke-RestMethod -Method Post -Uri $URL -Headers $h -ContentType "application/json; charset=utf-8" -Body $bytes }
   catch { "HTTP $($_.Exception.Response.StatusCode.value__): $($_.ErrorDetails.Message)" }
@@ -140,7 +149,8 @@ delete from gastos where id_cliente like 'prueba-%' or descripcion = 'menú';
 
 ```powershell
 $ANON = "tu-anon-key"
-Invoke-RestMethod "https://TU_PROJECT_REF.supabase.co/rest/v1/gastos?select=*" -Headers @{ apikey = $ANON; Authorization = "Bearer $ANON" }
+$ANON="sb_publishable_I9kOHEPXUF1Vtsp_z5JyaA_qNaOLeru"
+Invoke-RestMethod "https://zerftjbpfizkhrwelxde.supabase.co/rest/v1/gastos?select=*" -Headers @{ apikey = $ANON; Authorization = "Bearer $ANON" }
 # Esperado: error 401/permission denied, o [] (nunca tus gastos)
 ```
 
@@ -153,17 +163,21 @@ npm run dev -- --host
 
 En el iPhone abre en Safari `http://<IP-de-tu-PC>:5173`. La IP la ves con `ipconfig`, en «Dirección IPv4». Si no carga, permite **Node.js** en el Firewall de Windows (redes privadas). En modo desarrollo no se puede *instalar* la PWA: para eso hace falta la URL HTTPS de Vercel.
 
-Tests:
+Tests (desde la **raíz** del proyecto, no desde `web`):
 
 ```powershell
-npm test             # raíz: Edge Function
-npm run test:web     # utilidades de fechas y montos
+cd ..                # si sigues dentro de web
+npm test             # Edge Function
+npm run test:web     # utilidades de la PWA: fechas, montos e ids
 ```
+
+Si estás dentro de `web`, el equivalente de `npm run test:web` es simplemente `npm test`.
 
 ## 8. GitHub (privado) + Vercel
 
 ```powershell
 git remote add origin https://github.com/TU_USUARIO/gastos-app.git
+git remote add origin https://github.com/JohnSovero/gastos-app.git
 git push -u origin main
 ```
 
